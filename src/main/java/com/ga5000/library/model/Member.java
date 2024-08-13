@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,9 @@ public class Member implements UserDetails, Serializable {
     @JsonIgnore
     private String password;
 
+    @Column(nullable = false, length = 120)
+    private String email;
+
     @Column(nullable = false)
     private String phoneNumber;
 
@@ -41,11 +45,16 @@ public class Member implements UserDetails, Serializable {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
+    public Member(){}
 
-    public Member(Long memberId, String username, String password, String phoneNumber, Date membershipDate, UserRole role, List<Comment> comments, List<Transaction> transactions) {
+
+    public Member(Long memberId, String username, String password, String email,
+                  String phoneNumber, Date membershipDate, UserRole role,
+                  List<Comment> comments, List<Transaction> transactions) {
         this.memberId = memberId;
         this.username = username;
         this.password = password;
+        this.email = email;
         this.phoneNumber = phoneNumber;
         this.membershipDate = membershipDate;
         this.role = role;
@@ -67,6 +76,18 @@ public class Member implements UserDetails, Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhoneNumber() {
@@ -117,7 +138,12 @@ public class Member implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(membershipDate);
+        calendar.add(Calendar.MONTH, 6);
+
+        Date expirationDate = calendar.getTime();
+        return new Date().before(expirationDate);
     }
 
     @Override

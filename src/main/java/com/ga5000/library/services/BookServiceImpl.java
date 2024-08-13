@@ -19,18 +19,26 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public List<Book> getBookByGenre(String genre) {
-        return bookRepository.findByGenre(genre);
+        List<Book> books = bookRepository.findByGenre(genre);
+        if(books.isEmpty()){
+            throw  new BookNotFoundException("Books with genre: "+genre+" were not found");
+        }
+            return books;
     }
 
     @Override
     public List<Book> getBooksByAuthor(String author) {
-        return  bookRepository.findByAuthor(author);
+        List<Book> books =  bookRepository.findByAuthor(author);
+        if(books.isEmpty()){
+            throw  new BookNotFoundException("Books with genre: "+author+" were not found");
+        }
+        return books;
     }
 
     @Override
     public Book getBookById(Long id) {
         return bookRepository.findByIdWithComments(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException(("Book with id: "+id+" wasn't found")));
     }
 
     @Transactional
@@ -43,7 +51,7 @@ public class BookServiceImpl implements BookService{
     @Override
     public Book updateBook(Book book, Long id) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book with id: "+id+" wasn't found"));
         BeanUtils.copyProperties(book,existingBook);
 
         return bookRepository.save(existingBook);
@@ -53,7 +61,7 @@ public class BookServiceImpl implements BookService{
     @Override
     public void deleteBook(Long id){
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book with id: "+id+" wasn't found"));
 
         bookRepository.deleteById(id);
     }

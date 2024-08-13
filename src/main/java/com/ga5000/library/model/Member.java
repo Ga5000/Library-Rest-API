@@ -20,7 +20,7 @@ public class Member implements UserDetails, Serializable {
     private Long memberId;
 
     @Column(nullable = false, length = 80)
-    private String userName;
+    private String username;
 
     @Column(nullable = false, length = 255)
     @JsonIgnore
@@ -42,9 +42,9 @@ public class Member implements UserDetails, Serializable {
     private List<Transaction> transactions;
 
 
-    public Member(Long memberId, String userName, String password, String phoneNumber, Date membershipDate, UserRole role, List<Comment> comments, List<Transaction> transactions) {
+    public Member(Long memberId, String username, String password, String phoneNumber, Date membershipDate, UserRole role, List<Comment> comments, List<Transaction> transactions) {
         this.memberId = memberId;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.membershipDate = membershipDate;
@@ -61,8 +61,8 @@ public class Member implements UserDetails, Serializable {
         this.memberId = memberId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -142,6 +142,6 @@ public class Member implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.username;
     }
 }

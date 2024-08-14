@@ -24,6 +24,15 @@ public class Transaction implements Serializable {
 
     private LocalDateTime transactionDate;
 
+    public Transaction(){}
+
+    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate) {
+        this.id = id;
+        this.book = book;
+        this.member = member;
+        this.transactionType = transactionType;
+        this.transactionDate = transactionDate;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

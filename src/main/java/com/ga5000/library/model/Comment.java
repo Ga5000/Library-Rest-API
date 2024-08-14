@@ -20,6 +20,14 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public Comment(){}
+
+    public Comment(Long id, String content, Book book, Member member) {
+        this.id = id;
+        this.content = content;
+        this.book = book;
+        this.member = member;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

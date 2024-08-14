@@ -41,6 +41,8 @@ public class Book implements Serializable {
     @Column(nullable = false)
     private Date publishedDate;
 
+    public Book(){}
+
     public Book(Long bookId, String title, String isbn, String author, List<String> genres, List<Comment> comments, int availableCopies, int totalCopies, Date publishedDate) {
         this.bookId = bookId;
         this.title = title;

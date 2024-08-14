@@ -104,7 +104,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(email);
 
         if (member == null) {
-            throw new MemberNotFoundException("Member not found with email: " + email);
+            throw new MemberNotFoundException("Member wasn't found with email: " + email);
         }
         return toMemberDTO(member);
     }
@@ -114,14 +114,14 @@ public class MemberServiceImpl implements MemberService {
         Member member =  memberRepository.findByPhoneNumber(phoneNumber);
 
         if (member == null) {
-            throw new MemberNotFoundException("Member not found with phoneNumber: " + phoneNumber);
+            throw new MemberNotFoundException("Member wasn't found with phoneNumber: " + phoneNumber);
         }
         return toMemberDTO(member);
     }
 
     private Member findById(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new MemberNotFoundException("Member not found with id: "+id));
+                .orElseThrow(() -> new MemberNotFoundException("Member wasn't found with id: "+id));
     }
 
     @Transactional

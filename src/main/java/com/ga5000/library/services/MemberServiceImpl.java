@@ -20,9 +20,11 @@ import java.util.function.Function;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final VerificationService verificationService;
 
-    public MemberServiceImpl(MemberRepository memberRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, VerificationService verificationService) {
         this.memberRepository = memberRepository;
+        this.verificationService = verificationService;
     }
 
     @Transactional
@@ -60,10 +62,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void changePassword(Long id, String newPassword) {
+    public void changePassword(Long id, String newPassword, String verificationCode) {
+        if (!verificationService.verifyCode(id, verificationCode)) {
+            throw new IllegalArgumentException("Invalid or expired verification code.");
+        }
+
         Member member = findById(id);
         member.setPassword(newPassword);
         memberRepository.save(member);
+        verificationService.invalidateCode(id);
+    }
+
+    @Override
+    public void requestPasswordChange(String email) {
+        Member member = memberRepository.findByEmail(email);
+        verificationService.sendVerificationCode(member);
     }
 
     @Override
@@ -141,8 +154,7 @@ public class MemberServiceImpl implements MemberService {
                 member.getUsername(),
                 member.getEmail(),
                 member.getPhoneNumber(),
-                member.getMembershipDate(),
-                member.getRole()
+                member.getMembershipDate()
         );
     }
 }

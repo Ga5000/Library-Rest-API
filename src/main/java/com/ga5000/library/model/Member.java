@@ -37,6 +37,7 @@ public class Member implements UserDetails, Serializable {
     private Date membershipDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)

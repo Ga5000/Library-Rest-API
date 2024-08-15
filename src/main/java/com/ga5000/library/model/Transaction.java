@@ -22,16 +22,20 @@ public class Transaction implements Serializable {
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Column(nullable = false)
     private LocalDateTime transactionDate;
+
+    private LocalDateTime returnDate;
 
     public Transaction(){}
 
-    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate) {
+    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate, LocalDateTime returnDate) {
         this.id = id;
         this.book = book;
         this.member = member;
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
+        this.returnDate = returnDate;
     }
 
     public Long getId() { return id; }
@@ -48,4 +52,12 @@ public class Transaction implements Serializable {
 
     public LocalDateTime getTransactionDate() { return transactionDate; }
     public void setTransactionDate(LocalDateTime transactionDate) { this.transactionDate = transactionDate; }
+
+    public LocalDateTime getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDateTime returnDate) {
+        this.returnDate = returnDate;
+    }
 }

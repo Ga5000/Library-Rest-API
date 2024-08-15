@@ -1,8 +1,6 @@
 package com.ga5000.library.services;
 
-import com.ga5000.library.dtos.CreateTransactionDTO;
-import com.ga5000.library.dtos.TransactionDTO;
-import com.ga5000.library.dtos.UpdateTransactionDTO;
+import com.ga5000.library.dtos.*;
 import com.ga5000.library.model.Book;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,8 @@ public interface TransactionService {
     List<TransactionDTO> getAllTransactions();
 
 
-    TransactionDTO updateTransaction(Long id, UpdateTransactionDTO updateTransactionDTO);
+    TransactionDTO renew(Long id, RenewTransactionDTO updateTransactionDTO);
+    TransactionDTO returnBook(Long id, ReturnTransactionDTO returnTransactionDTO);
 
 
     void deleteTransaction(Long id);

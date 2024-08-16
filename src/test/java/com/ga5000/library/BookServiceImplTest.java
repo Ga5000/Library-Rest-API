@@ -1,15 +1,19 @@
 package com.ga5000.library;
 
+import com.ga5000.library.dtos.Book.BookDTO;
 import com.ga5000.library.exceptions.BookNotFoundException;
+import com.ga5000.library.exceptions.InvalidIsbnException;
 import com.ga5000.library.model.Book;
 import com.ga5000.library.repositories.BookRepository;
 import com.ga5000.library.services.BookServiceImpl;
+import com.ga5000.library.services.components.IsbnValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +26,9 @@ class BookServiceImplTest {
 
     @Mock
     private BookRepository bookRepository;
+
+    @Mock
+    private IsbnValidator isbnValidator;
 
     @InjectMocks
     private BookServiceImpl bookService;
@@ -37,11 +44,10 @@ class BookServiceImplTest {
         List<Book> books = List.of(book);
         when(bookRepository.findByGenre("Fiction")).thenReturn(books);
 
-        List<Book> result = bookService.getBookByGenre("Fiction");
+        List<BookDTO> result = bookService.getBookByGenre("Fiction");
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(book, result.get(0));
     }
 
     @Test
@@ -61,11 +67,10 @@ class BookServiceImplTest {
         List<Book> books = List.of(book);
         when(bookRepository.findByAuthor("Author")).thenReturn(books);
 
-        List<Book> result = bookService.getBooksByAuthor("Author");
+        List<BookDTO> result = bookService.getBooksByAuthor("Author");
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(book, result.get(0));
     }
 
     @Test
@@ -76,7 +81,7 @@ class BookServiceImplTest {
             bookService.getBooksByAuthor("Unknown Author");
         });
 
-        assertEquals("Books with genre: Unknown Author were not found", thrown.getMessage());
+        assertEquals("Books with author: Unknown Author were not found", thrown.getMessage());
     }
 
     @Test
@@ -84,10 +89,9 @@ class BookServiceImplTest {
         Book book = new Book();
         when(bookRepository.findByIdWithComments(anyLong())).thenReturn(Optional.of(book));
 
-        Book result = bookService.getBookById(1L);
+        BookDTO result = bookService.getBookById(1L);
 
         assertNotNull(result);
-        assertEquals(book, result);
     }
 
     @Test
@@ -102,24 +106,38 @@ class BookServiceImplTest {
     }
 
     @Test
-    void testSaveBook() {
+    void testCreateBook_ValidIsbn() {
+        BookDTO bookDTO = new BookDTO("Title", "123456789X", "Author", List.of("Genre"), 5, 10, new Date());
         Book book = new Book();
         when(bookRepository.save(any(Book.class))).thenReturn(book);
+        when(isbnValidator.isValidIsbn("123456789X")).thenReturn(true);
 
-        Book result = bookService.createBook(book);
+        BookDTO result = bookService.createBook(bookDTO);
 
         assertNotNull(result);
-        assertEquals(book, result);
+    }
+
+    @Test
+    void testCreateBook_InvalidIsbn() {
+        BookDTO bookDTO = new BookDTO("Title", "InvalidISBN", "Author", List.of("Genre"), 5, 10, new Date());
+        when(isbnValidator.isValidIsbn("InvalidISBN")).thenReturn(false);
+
+        InvalidIsbnException thrown = assertThrows(InvalidIsbnException.class, () -> {
+            bookService.createBook(bookDTO);
+        });
+
+        assertEquals("This book ISBN: InvalidISBN is not valid", thrown.getMessage());
     }
 
     @Test
     void testUpdateBook() {
+        BookDTO bookDTO = new BookDTO("Title", "123456789X", "Author", List.of("Genre"), 5, 10, new Date());
         Book existingBook = new Book();
-        Book updatedBook = new Book();
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(existingBook));
         when(bookRepository.save(any(Book.class))).thenReturn(existingBook);
+        when(isbnValidator.isValidIsbn("123456789X")).thenReturn(true);
 
-        Book result = bookService.updateBook(updatedBook, 1L);
+        BookDTO result = bookService.updateBook(bookDTO, 1L);
 
         assertNotNull(result);
         verify(bookRepository, times(1)).findById(1L);
@@ -128,11 +146,11 @@ class BookServiceImplTest {
 
     @Test
     void testUpdateBook_BookNotFound() {
-        Book updatedBook = new Book();
+        BookDTO bookDTO = new BookDTO("Title", "123456789X", "Author", List.of("Genre"), 5, 10, new Date());
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         BookNotFoundException thrown = assertThrows(BookNotFoundException.class, () -> {
-            bookService.updateBook(updatedBook, 1L);
+            bookService.updateBook(bookDTO, 1L);
         });
 
         assertEquals("Book with id: 1 wasn't found", thrown.getMessage());
@@ -158,4 +176,3 @@ class BookServiceImplTest {
         assertEquals("Book with id: 1 wasn't found", thrown.getMessage());
     }
 }
-

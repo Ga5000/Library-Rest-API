@@ -1,4 +1,4 @@
-package com.ga5000.library.dtos;
+package com.ga5000.library.dtos.Member;
 
 import java.util.Date;
 

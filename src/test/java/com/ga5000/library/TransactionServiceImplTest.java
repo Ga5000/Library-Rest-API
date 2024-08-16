@@ -1,6 +1,9 @@
 package com.ga5000.library;
 
-import com.ga5000.library.dtos.*;
+import com.ga5000.library.dtos.Transaction.CreateTransactionDTO;
+import com.ga5000.library.dtos.Transaction.RenewTransactionDTO;
+import com.ga5000.library.dtos.Transaction.ReturnTransactionDTO;
+import com.ga5000.library.dtos.Transaction.TransactionDTO;
 import com.ga5000.library.exceptions.*;
 import com.ga5000.library.model.*;
 import com.ga5000.library.repositories.*;

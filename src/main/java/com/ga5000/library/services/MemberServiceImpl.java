@@ -1,8 +1,8 @@
 package com.ga5000.library.services;
 
-import com.ga5000.library.dtos.CreateMemberDTO;
-import com.ga5000.library.dtos.MemberDTO;
-import com.ga5000.library.dtos.UpdateMemberDTO;
+import com.ga5000.library.dtos.Member.CreateMemberDTO;
+import com.ga5000.library.dtos.Member.MemberDTO;
+import com.ga5000.library.dtos.Member.UpdateMemberDTO;
 import com.ga5000.library.exceptions.MemberNotFoundException;
 import com.ga5000.library.model.Member;
 import com.ga5000.library.repositories.MemberRepository;

@@ -7,7 +7,7 @@ import com.ga5000.library.exceptions.MemberNotFoundException;
 import com.ga5000.library.model.Member;
 import com.ga5000.library.repositories.MemberRepository;
 import com.ga5000.library.services.MemberServiceImpl;
-import com.ga5000.library.services.VerificationService;
+import com.ga5000.library.services.VerificationCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +27,7 @@ class MemberServiceImplTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private VerificationService verificationService;
+    private VerificationCodeService verificationCodeService;
 
     @InjectMocks
     private MemberServiceImpl memberService;
@@ -97,19 +97,19 @@ class MemberServiceImplTest {
         Member member = new Member();
         member.setPassword("oldPassword");
 
-        when(verificationService.verifyCode(anyLong(), anyString())).thenReturn(true);
+        when(verificationCodeService.verifyCode(anyLong(), anyString())).thenReturn(true);
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
 
         memberService.changePassword(1L, "newPassword", "1234");
 
         verify(memberRepository, times(1)).save(member);
-        verify(verificationService, times(1)).invalidateCode(1L);
+        verify(verificationCodeService, times(1)).invalidateCode(1L);
         assertEquals("newPassword", member.getPassword());
     }
 
     @Test
     void changePassword_shouldThrowExceptionWhenCodeIsInvalid() {
-        when(verificationService.verifyCode(anyLong(), anyString())).thenReturn(false);
+        when(verificationCodeService.verifyCode(anyLong(), anyString())).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> memberService.changePassword(1L, "newPassword", "1234"));
         verify(memberRepository, never()).save(any(Member.class));
@@ -122,7 +122,7 @@ class MemberServiceImplTest {
 
         memberService.requestPasswordChange("email");
 
-        verify(verificationService, times(1)).sendVerificationCode(member);
+        verify(verificationCodeService, times(1)).sendVerificationCode(member);
     }
 
     @Test

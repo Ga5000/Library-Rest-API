@@ -6,13 +6,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.concurrent.*;
 
-public class VerificationService {
+public class VerificationCodeService {
 
     private final JavaMailSender mailSender;
     private final ConcurrentHashMap<Long, String> verificationCodes = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public VerificationService(JavaMailSender mailSender) {
+    public VerificationCodeService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 

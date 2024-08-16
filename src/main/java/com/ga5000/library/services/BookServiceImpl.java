@@ -29,7 +29,8 @@ public class BookServiceImpl implements BookService {
         if (books.isEmpty()) {
             throw new BookNotFoundException("Books with genre: " + genre + " were not found");
         }
-        return toBooksDTOs(books);
+        return books.stream()
+                .map(this::toBookDTO).toList();
     }
 
     @Override
@@ -38,7 +39,8 @@ public class BookServiceImpl implements BookService {
         if (books.isEmpty()) {
             throw new BookNotFoundException("Books with author: " + author + " were not found");
         }
-        return toBooksDTOs(books);
+        return books.stream()
+                .map(this::toBookDTO).toList();
     }
 
     @Override
@@ -96,11 +98,4 @@ public class BookServiceImpl implements BookService {
         );
     }
 
-    private List<BookDTO> toBooksDTOs(List<Book> books) {
-        List<BookDTO> bookDTOs = new ArrayList<>();
-        for (Book book : books) {
-            bookDTOs.add(toBookDTO(book));
-        }
-        return bookDTOs;
-    }
 }

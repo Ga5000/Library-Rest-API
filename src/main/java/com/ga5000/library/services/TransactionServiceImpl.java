@@ -15,11 +15,13 @@ import com.ga5000.library.repositories.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+@Service
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -93,6 +95,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .stream().map(this::toTransactionDTO).toList();
     }
 
+    @Transactional
     @Override
     public TransactionDTO renew(Long id, RenewTransactionDTO renewTransactionDTO) {
         Transaction transaction = findById(id);
@@ -112,6 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
             return toTransactionDTO(transaction);
     }
 
+    @Transactional
     @Override
     public TransactionDTO returnBook(Long id, ReturnTransactionDTO returnTransactionDTO) {
         Transaction transaction = findById(id);
@@ -134,6 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
             return toTransactionDTO(transaction);
 
     }
+    @Transactional
     @Override
     public void deleteTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id)

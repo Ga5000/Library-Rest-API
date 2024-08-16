@@ -106,7 +106,7 @@ class BookServiceImplTest {
         Book book = new Book();
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        Book result = bookService.saveBook(book);
+        Book result = bookService.createBook(book);
 
         assertNotNull(result);
         assertEquals(book, result);

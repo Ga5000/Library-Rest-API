@@ -12,7 +12,7 @@ public class Transaction implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id",nullable = false)
     private Book book;
 
     @ManyToOne

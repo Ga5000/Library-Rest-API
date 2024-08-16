@@ -51,6 +51,8 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = new Transaction();
 
         BeanUtils.copyProperties(createTransactionDTO, transaction);
+        transaction.setBook(book);
+        transaction.setMember(member);
         transaction.setTransactionType(TransactionType.BORROW);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setReturnDate(transaction.getTransactionDate().plusDays(7));
@@ -66,7 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> getTransactionsByMemberId(Long memberId) {
-       List<Transaction> transactions = transactionRepository.findByMemberId(memberId);
+       List<Transaction> transactions = transactionRepository.findByMember_MemberId(memberId);
        if(transactions.isEmpty()){
            throw new TransactionNotFoundException("This member has not made any transactions");
        }
@@ -75,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> getTransactionsByBookId(Long bookId) {
-        List<Transaction> transactions = transactionRepository.findByBookId(bookId);
+        List<Transaction> transactions = transactionRepository.findByBook_BookId(bookId);
         if(transactions.isEmpty()){
             throw new TransactionNotFoundException("This book doesn't have any transactions");
         }
@@ -123,6 +125,8 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setReturnDate(null);
             book.setAvailableCopies(book.getAvailableCopies()+1);
         }
+            transaction.setBook(book);
+            transaction.setMember(member);
             transactionRepository.save(transaction);
             return toTransactionDTO(transaction);
 
@@ -143,7 +147,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Book> getCurrentBorrowedBooks(Long memberId) {
 
-        List<Transaction> transactions = transactionRepository.findByMemberIdAndTransactionType(memberId, TransactionType.BORROW);
+        List<Transaction> transactions = transactionRepository.findByMember_MemberIdAndTransactionType(memberId, TransactionType.BORROW);
 
         List<Long> bookIds = transactions.stream()
                 .map(transaction -> transaction.getBook().getBookId())
@@ -180,7 +184,8 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getBook().getBookId(),
                 transaction.getMember().getMemberId(),
                 transaction.getTransactionType(),
-                transaction.getTransactionDate()
+                transaction.getTransactionDate(),
+                transaction.getReturnDate()
         );
     }
 

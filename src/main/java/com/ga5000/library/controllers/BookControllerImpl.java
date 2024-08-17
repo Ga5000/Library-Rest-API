@@ -34,7 +34,7 @@ public class BookControllerImpl implements BookController {
     @Override
     public ResponseEntity<Void> deleteBook(@PathVariable("bookId") Long bookId) {
         bookService.deleteBook(bookId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/genre/{genre}")

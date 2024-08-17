@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "members")
@@ -169,5 +170,18 @@ public class Member implements UserDetails, Serializable {
     @Override
     public String getUsername() {
         return this.username;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(username, member.username) && Objects.equals(email, member.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, email);
     }
 }

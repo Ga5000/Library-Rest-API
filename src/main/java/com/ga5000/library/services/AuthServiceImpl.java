@@ -1,6 +1,5 @@
 package com.ga5000.library.services;
 
-import com.ga5000.library.model.Member;
 import com.ga5000.library.repositories.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,14 +7,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthServiceImpl implements UserDetailsService {
 
     private final MemberRepository memberRepository;
-    private final MemberServiceImpl memberService;
-
-    public AuthService(MemberRepository memberRepository, MemberServiceImpl memberService) {
+    public AuthServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.memberService = memberService;
     }
 
     @Override

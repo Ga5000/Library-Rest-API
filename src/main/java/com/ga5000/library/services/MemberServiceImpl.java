@@ -10,9 +10,12 @@ import com.ga5000.library.secutity.UserRole;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,9 +57,15 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void deleteMember(Long id) {
-        Member member = findById(id);
-        memberRepository.deleteById(member.getMemberId());
+    public void deleteMember(Long memberId, String currentUsername) throws AccessDeniedException {
+        Member memberToDelete = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found"));
+
+        if (isAdmin() || memberToDelete.getUsername().equals(currentUsername)) {
+            memberRepository.delete(memberToDelete);
+        } else {
+            throw new AccessDeniedException("You are not authorized to delete this account");
+        }
     }
 
     @Override
@@ -139,5 +148,11 @@ public class MemberServiceImpl implements MemberService {
                 member.getPhoneNumber(),
                 member.getMembershipDate()
         );
+    }
+
+    private boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 }

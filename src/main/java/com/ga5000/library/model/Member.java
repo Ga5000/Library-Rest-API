@@ -8,9 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
+
 import java.util.List;
 
 @Entity
@@ -34,7 +34,7 @@ public class Member implements UserDetails, Serializable {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private Date membershipDate;
+    private LocalDateTime membershipDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -50,7 +50,7 @@ public class Member implements UserDetails, Serializable {
 
 
     public Member(Long memberId, String username, String password, String email,
-                  String phoneNumber, Date membershipDate, UserRole role,
+                  String phoneNumber, LocalDateTime membershipDate, UserRole role,
                   List<Comment> comments, List<Transaction> transactions) {
         this.memberId = memberId;
         this.username = username;
@@ -99,11 +99,11 @@ public class Member implements UserDetails, Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getMembershipDate() {
+    public LocalDateTime getMembershipDate() {
         return membershipDate;
     }
 
-    public void setMembershipDate(Date membershipDate) {
+    public void setMembershipDate(LocalDateTime membershipDate) {
         this.membershipDate = membershipDate;
     }
 
@@ -133,18 +133,17 @@ public class Member implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return switch (this.role) {
+            case ADMIN -> List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER"));
+            case USER -> List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        };
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(membershipDate);
-        calendar.add(Calendar.MONTH, 6);
-
-        Date expirationDate = calendar.getTime();
-        return new Date().before(expirationDate);
+        return LocalDateTime.now().isBefore(membershipDate.plusMonths(6));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.ga5000.library.dtos.Comment;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public record CommentDTO(String member, Date createdAt,String content) {
+public record CommentDTO(String member, LocalDateTime createdAt, String content) {
 }

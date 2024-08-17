@@ -87,6 +87,7 @@ public class BookServiceImpl implements BookService {
 
     private BookDTO toBookDTO(Book book) {
         return new BookDTO(
+                book.getBookId(),
                 book.getTitle(),
                 book.getIsbn(),
                 book.getAuthor(),

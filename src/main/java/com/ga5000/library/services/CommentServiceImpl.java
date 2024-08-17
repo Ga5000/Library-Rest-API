@@ -15,8 +15,8 @@ import com.ga5000.library.repositories.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 import java.util.List;
 
 public class CommentServiceImpl implements CommentService{
@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService{
         BeanUtils.copyProperties(createCommentDTO,comment);
         comment.setBook(book);
         comment.setMember(member);
-        comment.setCreatedAt(Date.from(Instant.now()));
+        comment.setCreatedAt(LocalDateTime.now());
 
         commentRepository.save(comment);
 
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public List<CommentDTO> getCommentsOfMemberByMemberId(Long memberId) {
-        List<Comment> comments = commentRepository.findByMemberId(memberId);
+        List<Comment> comments = commentRepository.findByMember_MemberId(memberId);
         if (comments.isEmpty()) {
             throw new MemberNotFoundException("No comments found for member with id: " + memberId);
         }
@@ -72,7 +72,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public List<CommentDTO> getBookCommentsByBookId(Long bookId) {
-        List<Comment> comments = commentRepository.findByBookId(bookId);
+        List<Comment> comments = commentRepository.findByBook_BookId(bookId);
         if (comments.isEmpty()) {
             throw new BookNotFoundException("No comments found for book with id: " + bookId);
         }

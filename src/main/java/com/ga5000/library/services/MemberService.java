@@ -16,10 +16,6 @@ public interface MemberService {
     void deleteMember(Long id);
 
     UserDetails loadUserByUsername(String username);
-    void changePassword(Long id, String newPassword, String code);
-
-    void requestPasswordChange(String email);
-
     void updateUserRole(Long id, UserRole newRole);
 
     List<MemberDTO> getAllMembers();

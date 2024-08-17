@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,10 @@ import java.util.function.Function;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final VerificationCodeService verificationCodeService;
 
-    public MemberServiceImpl(MemberRepository memberRepository, VerificationCodeService verificationCodeService) {
+
+    public MemberServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.verificationCodeService = verificationCodeService;
     }
 
     @Transactional
@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberDTO createMember(CreateMemberDTO createMemberDTO) {
         Member member = new Member();
         BeanUtils.copyProperties(createMemberDTO, member);
-        member.setMembershipDate(new Date());
+        member.setMembershipDate(LocalDateTime.now());
         return saveAndConvertToDTO(member);
     }
 
@@ -63,23 +63,6 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    @Override
-    public void changePassword(Long id, String newPassword, String verificationCode) {
-        if (!verificationCodeService.verifyCode(id, verificationCode)) {
-            throw new IllegalArgumentException("Invalid or expired verification code.");
-        }
-
-        Member member = findById(id);
-        member.setPassword(newPassword);
-        memberRepository.save(member);
-        verificationCodeService.invalidateCode(id);
-    }
-
-    @Override
-    public void requestPasswordChange(String email) {
-        Member member = memberRepository.findByEmail(email);
-        verificationCodeService.sendVerificationCode(member);
-    }
 
     @Override
     public void updateUserRole(Long id, UserRole newRole) {
@@ -106,10 +89,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void renewMemberShip(Long id) {
         Member member = findById(id);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MONTH, 6);
-        member.setMembershipDate(calendar.getTime());
+        member.setMembershipDate(member.getMembershipDate().plusMonths(6));
         memberRepository.save(member);
     }
 

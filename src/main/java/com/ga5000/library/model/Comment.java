@@ -2,32 +2,32 @@ package com.ga5000.library.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
-public class Comment {
+public class Comment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
+    @Column(nullable = false, length = 1000)
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    public Comment(){}
+    public Comment() {}
 
-    public Comment(Long id, String content, Book book, Member member, Date createdAt) {
+    public Comment(Long id, String content, Book book, Member member, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
         this.book = book;
@@ -47,11 +47,6 @@ public class Comment {
     public Member getMember() { return member; }
     public void setMember(Member member) { this.member = member; }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

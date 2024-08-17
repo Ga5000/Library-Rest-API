@@ -7,9 +7,12 @@ import com.ga5000.library.model.Member;
 import com.ga5000.library.services.AuthService;
 import com.ga5000.library.services.MemberService;
 import com.ga5000.library.services.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +36,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody CreateMemberDTO request) {
-        UserDetails existingUser = authService.loadUserByUsername(request.username());
-        if (existingUser != null) {
-            return ResponseEntity.badRequest().body("Username already exists");
+    public ResponseEntity<String> register(@RequestBody @Valid CreateMemberDTO request) {
+        try{
+            UserDetails existingUser = authService.loadUserByUsername(request.username());
+            if (existingUser != null) {
+                return ResponseEntity.badRequest().body("Username already exists");
+            }
+        }catch (UsernameNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username wasn't found");
         }
 
         Member newMember = new Member();
@@ -56,7 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthDTO request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthDTO request) {
         UserDetails userDetails = authService.loadUserByUsername(request.username());
         if (userDetails == null || !passwordEncoder.matches(request.password(), ((Member) userDetails).getPassword())) {
             return ResponseEntity.badRequest().body(new AuthResponse("Invalid username or password"));

@@ -35,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = new Member();
         BeanUtils.copyProperties(createMemberDTO, member);
         member.setMembershipDate(LocalDateTime.now());
+        member.setRole(UserRole.USER);
         return saveAndConvertToDTO(member);
     }
 

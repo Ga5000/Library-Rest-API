@@ -12,12 +12,11 @@ import java.util.List;
 
 public interface MemberService {
     MemberDTO createMember(CreateMemberDTO member);
-    MemberDTO getMemberById(Long id);
-    MemberDTO updateMember(Long id, UpdateMemberDTO updatedMember);
+    MemberDTO getMemberById(Long id, String currentUsername) throws AccessDeniedException;
+    MemberDTO updateMember(Long id, UpdateMemberDTO updatedMember, String currentUsername) throws AccessDeniedException;
     void deleteMember(Long id, String currentUsername) throws AccessDeniedException;
 
     UserDetails loadUserByUsername(String username);
-    void updateUserRole(Long id, UserRole newRole);
 
     List<MemberDTO> getAllMembers();
     boolean isMemberActive(Long id);

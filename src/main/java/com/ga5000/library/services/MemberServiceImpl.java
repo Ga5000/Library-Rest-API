@@ -43,18 +43,30 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDTO getMemberById(Long id) {
-        return findByIdAndConvertToDTO(id, this::toMemberDTO);
+    public MemberDTO getMemberById(Long id, String currentUsername) throws AccessDeniedException {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("Member with id: " + id + " wasn't found"));
+
+        if (isAdmin() || member.getUsername().equals(currentUsername)) {
+            return toMemberDTO(member);
+        } else {
+            throw new AccessDeniedException("You do not have permission to view this member's details");
+        }
     }
 
     @Transactional
     @Override
-    public MemberDTO updateMember(Long id, UpdateMemberDTO updateMemberDTO) {
-        Member member = findById(id);
-        BeanUtils.copyProperties(updateMemberDTO, member);
-        return saveAndConvertToDTO(member);
-    }
+    public MemberDTO updateMember(Long id, UpdateMemberDTO updateMemberDTO, String currentUsername) throws AccessDeniedException {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("Member with id: " + id + " wasn't found"));
 
+        if (isAdmin() || member.getUsername().equals(currentUsername)) {
+            BeanUtils.copyProperties(updateMemberDTO, member);
+            return saveAndConvertToDTO(member);
+        } else {
+            throw new AccessDeniedException("You do not have permission to update this member's details");
+        }
+    }
     @Transactional
     @Override
     public void deleteMember(Long memberId, String currentUsername) throws AccessDeniedException {
@@ -71,14 +83,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         return memberRepository.findByUsername(username);
-    }
-
-
-    @Override
-    public void updateUserRole(Long id, UserRole newRole) {
-        Member member = findById(id);
-        member.setRole(newRole);
-        memberRepository.save(member);
     }
 
     @Override

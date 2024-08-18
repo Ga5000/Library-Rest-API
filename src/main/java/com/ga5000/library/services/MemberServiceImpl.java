@@ -1,5 +1,6 @@
 package com.ga5000.library.services;
 
+import com.ga5000.library.dtos.Member.AllMembersDTO;
 import com.ga5000.library.dtos.Member.CreateMemberDTO;
 import com.ga5000.library.dtos.Member.MemberDTO;
 import com.ga5000.library.dtos.Member.UpdateMemberDTO;
@@ -86,10 +87,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberDTO> getAllMembers() {
+    public List<AllMembersDTO> getAllMembers() {
         return memberRepository.findAll(Sort.by(Sort.Order.asc("username")))
                 .stream()
-                .map(this::toMemberDTO)
+                .map(this::toAllMembersDTO)
                 .toList();
     }
 
@@ -99,12 +100,19 @@ public class MemberServiceImpl implements MemberService {
         return member.isAccountNonExpired();
     }
 
+
     @Transactional
     @Override
-    public void renewMemberShip(Long id) {
-        Member member = findById(id);
-        member.setMembershipDate(member.getMembershipDate().plusMonths(6));
-        memberRepository.save(member);
+    public void renewMemberShip(Long id, String currentUsername) throws AccessDeniedException {
+        Member memberToRenew = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found"));
+
+        if (isAdmin() || memberToRenew.getUsername().equals(currentUsername)) {
+            memberToRenew.setMembershipDate(memberToRenew.getMembershipDate().plusMonths(6));
+            memberRepository.save(memberToRenew);
+        } else {
+            throw new AccessDeniedException("You are not authorized to renew this membership");
+        }
     }
 
     @Override
@@ -151,6 +159,18 @@ public class MemberServiceImpl implements MemberService {
                 member.getEmail(),
                 member.getPhoneNumber(),
                 member.getMembershipDate()
+        );
+
+    }
+
+    private AllMembersDTO toAllMembersDTO(Member member){
+        return new AllMembersDTO(
+                member.getMemberId(),
+                member.getUsername(),
+                member.getEmail(),
+                member.getPhoneNumber(),
+                member.getMembershipDate(),
+                member.getRole()
         );
     }
 

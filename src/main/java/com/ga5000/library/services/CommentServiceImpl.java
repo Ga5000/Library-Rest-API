@@ -14,11 +14,13 @@ import com.ga5000.library.repositories.CommentRepository;
 import com.ga5000.library.repositories.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
 
+@Service
 public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final BookRepository bookRepository;

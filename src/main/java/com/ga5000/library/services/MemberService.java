@@ -1,10 +1,10 @@
 package com.ga5000.library.services;
 
+import com.ga5000.library.dtos.Member.AllMembersDTO;
 import com.ga5000.library.dtos.Member.CreateMemberDTO;
 import com.ga5000.library.dtos.Member.MemberDTO;
 import com.ga5000.library.dtos.Member.UpdateMemberDTO;
 
-import com.ga5000.library.secutity.UserRole;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.nio.file.AccessDeniedException;
@@ -18,9 +18,9 @@ public interface MemberService {
 
     UserDetails loadUserByUsername(String username);
 
-    List<MemberDTO> getAllMembers();
+    List<AllMembersDTO> getAllMembers();
     boolean isMemberActive(Long id);
-    void renewMemberShip(Long id);
+    void renewMemberShip(Long id, String currentUsername) throws AccessDeniedException;
 
     MemberDTO findByEmail(String email);
     MemberDTO findByPhoneNumber(String phoneNumber);

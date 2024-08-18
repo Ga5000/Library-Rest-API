@@ -14,6 +14,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(BookExistsException.class)
+    public ResponseEntity<String> handleBookExistsException(BookExistsException ex, WebRequest request){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
     @ExceptionHandler(NoAvailableCopiesException.class)
     public ResponseEntity<String> handleNoAvailableCopiesException(NoAvailableCopiesException ex, WebRequest request){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -51,6 +56,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenVerificationException.class)
     public ResponseEntity<String> handleTokenVerificationException(TokenVerificationException ex, WebRequest request){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }

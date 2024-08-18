@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -31,36 +32,52 @@ public class CommentServiceImpl implements CommentService{
         this.bookRepository = bookRepository;
         this.memberRepository = memberRepository;
     }
-
     @Transactional
     @Override
-    public CommentDTO createComment(Long bookId, Long memberId, CreateCommentDTO createCommentDTO) {
-        Comment comment = new Comment();
+    public CommentDTO createComment(Long bookId, Long memberId, CreateCommentDTO createCommentDTO, String currentUsername) throws AccessDeniedException {
         Book book = bookRepository.findById(bookId)
-                        .orElseThrow(() -> new BookNotFoundException("Book with id: "+bookId+" wasn't found"));
+                .orElseThrow(() -> new BookNotFoundException("Book with id: " + bookId + " wasn't found"));
         Member member = memberRepository.findById(memberId)
-                        .orElseThrow(() -> new MemberNotFoundException("Member with id: "+memberId+" wasn't found"));
-        BeanUtils.copyProperties(createCommentDTO,comment);
-        comment.setBook(book);
-        comment.setMember(member);
-        comment.setCreatedAt(LocalDateTime.now());
+                .orElseThrow(() -> new MemberNotFoundException("Member with id: " + memberId + " wasn't found"));
 
-        commentRepository.save(comment);
 
-        return toCommentDTO(comment);
+        if (member.getUsername().equals(currentUsername)) {
+
+            Comment comment = new Comment();
+            BeanUtils.copyProperties(createCommentDTO, comment);
+
+            comment.setBook(book);
+            comment.setMember(member);
+            comment.setCreatedAt(LocalDateTime.now());
+
+            commentRepository.save(comment);
+
+            return toCommentDTO(comment);
+        } else {
+            throw new AccessDeniedException("You are not authorized to create a comment for this member");
+        }
     }
+
 
     @Transactional
     @Override
-    public CommentDTO updateComment(Long commentId, UpdateCommentDTO updateCommentDTO) {
+    public CommentDTO updateComment(Long commentId, UpdateCommentDTO updateCommentDTO, String currentUsername) throws AccessDeniedException {
+
         Comment existingComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("Comment with id: "+commentId+" wasn't found"));
-        existingComment.setContent(updateCommentDTO.content());
-        commentRepository.save(existingComment);
+                .orElseThrow(() -> new CommentNotFoundException("Comment with id: " + commentId + " wasn't found"));
 
-        return toCommentDTO(existingComment);
+        if (existingComment.getMember().getUsername().equals(currentUsername)) {
 
+            existingComment.setContent(updateCommentDTO.content());
+
+            commentRepository.save(existingComment);
+
+            return toCommentDTO(existingComment);
+        } else {
+            throw new AccessDeniedException("You are not authorized to update this comment");
+        }
     }
+
 
     @Override
     public List<CommentDTO> getCommentsOfMemberByMemberId(Long memberId) {

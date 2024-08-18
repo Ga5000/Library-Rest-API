@@ -19,4 +19,6 @@ public interface BookRepository extends JpaRepository<Book,Long> {
 
     @Query("SELECT b FROM Book b LEFT JOIN FETCH b.comments WHERE b.id = :id")
     Optional<Book> findByIdWithComments(@Param("id") Long id);
+
+    boolean existsByIsbn(String isbn);
 }

@@ -1,6 +1,9 @@
 package com.ga5000.library.controllers;
 
 import com.ga5000.library.dtos.Book.BookDTO;
+import com.ga5000.library.dtos.Book.BookWithCommentsDTO;
+import com.ga5000.library.dtos.Book.CreateBookDTO;
+import com.ga5000.library.dtos.Book.UpdateBookDTO;
 import com.ga5000.library.services.BookServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,13 +23,13 @@ public class BookControllerImpl implements BookController {
 
     @PostMapping
     @Override
-    public ResponseEntity<BookDTO> createBook(@RequestBody @Valid BookDTO book) {
+    public ResponseEntity<BookDTO> createBook(@RequestBody @Valid CreateBookDTO book) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(book));
     }
 
     @PutMapping("/{bookId}")
     @Override
-    public ResponseEntity<BookDTO> updateBook(@PathVariable("bookId") Long bookId, @RequestBody @Valid BookDTO book) {
+    public ResponseEntity<BookDTO> updateBook(@PathVariable("bookId") Long bookId, @RequestBody @Valid UpdateBookDTO book) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.updateBook(book, bookId));
     }
 
@@ -51,7 +54,7 @@ public class BookControllerImpl implements BookController {
 
     @GetMapping("/{bookId}")
     @Override
-    public ResponseEntity<BookDTO> getBookWithComments(@PathVariable("bookId") Long bookId) {
+    public ResponseEntity<BookWithCommentsDTO> getBookWithComments(@PathVariable("bookId") Long bookId) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBookById(bookId));
     }
 }

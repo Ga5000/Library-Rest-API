@@ -61,6 +61,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionType(TransactionType.BORROW);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setReturnDate(transaction.getTransactionDate().plusDays(7));
+        transaction.setFinished(false);
 
         transactionRepository.save(transaction);
         return toTransactionDTO(transaction);
@@ -73,20 +74,29 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> getTransactionsByMemberId(Long memberId) {
-       List<Transaction> transactions = transactionRepository.findByMember_MemberId(memberId);
-       if(transactions.isEmpty()){
-           throw new TransactionNotFoundException("This member has not made any transactions");
+       try{
+           List<Transaction> transactions = transactionRepository.findByMember_MemberId(memberId);
+           if(transactions.isEmpty()){
+               throw new TransactionNotFoundException("This member has not made any transactions");
+           }
+           return transactions.stream().map(this::toTransactionDTO).toList();
+       }catch (MemberNotFoundException e){
+           throw new MemberNotFoundException("Member not found");
        }
-        return transactions.stream().map(this::toTransactionDTO).toList();
+
     }
 
     @Override
     public List<TransactionDTO> getTransactionsByBookId(Long bookId) {
-        List<Transaction> transactions = transactionRepository.findByBook_BookId(bookId);
-        if(transactions.isEmpty()){
-            throw new TransactionNotFoundException("This book doesn't have any transactions");
+        try{
+            List<Transaction> transactions = transactionRepository.findByBook_BookId(bookId);
+            if(transactions.isEmpty()){
+                throw new TransactionNotFoundException("This book doesn't have any transactions");
+            }
+            return transactions.stream().map(this::toTransactionDTO).toList();
+        }catch (BookNotFoundException e){
+            throw new BookNotFoundException("Book not found");
         }
-         return transactions.stream().map(this::toTransactionDTO).toList();
     }
 
     @Override
@@ -100,10 +110,10 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionDTO renew(Long id, RenewTransactionDTO renewTransactionDTO) {
         Transaction transaction = findById(id);
         Book book = bookRepository.findById(renewTransactionDTO.bookId())
-                .orElseThrow(() -> new BookNotFoundException("Book with id: " + renewTransactionDTO.bookId() + " wasn't found"));
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
         Member member = memberRepository.findById(renewTransactionDTO.memberId())
-                .orElseThrow(() -> new MemberNotFoundException("Member with id: " + renewTransactionDTO.memberId() + " wasn't found"));
+                .orElseThrow(() -> new MemberNotFoundException("Member not found"));
 
         if(transaction.getTransactionType() != TransactionType.BORROW){
             throw new TransactionTypeException("Cannot renew a transaction that is not a BORROW type.");
@@ -120,10 +130,10 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionDTO returnBook(Long id, ReturnTransactionDTO returnTransactionDTO) {
         Transaction transaction = findById(id);
         Book book = bookRepository.findById(returnTransactionDTO.bookId())
-                .orElseThrow(() -> new BookNotFoundException("Book with id: " + returnTransactionDTO.bookId() + " wasn't found"));
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
         Member member = memberRepository.findById(returnTransactionDTO.memberId())
-                .orElseThrow(() -> new MemberNotFoundException("Member with id: " + returnTransactionDTO.memberId() + " wasn't found"));
+                .orElseThrow(() -> new MemberNotFoundException("Member not found"));
 
         if(transaction.getTransactionType() != TransactionType.BORROW){
             throw new TransactionTypeException("Cannot return a transaction that is not a BORROW type.");
@@ -134,6 +144,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
             transaction.setBook(book);
             transaction.setMember(member);
+            transaction.setFinished(true);
             transactionRepository.save(transaction);
             return toTransactionDTO(transaction);
 
@@ -142,7 +153,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void deleteTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new TransactionNotFoundException("Transaction with id: "+id+" wasn't found"));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
 
         transactionRepository.deleteById(id);
     }
@@ -183,17 +194,18 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction findById(Long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(() -> new TransactionNotFoundException("Transaction with id: "+id+" wasn't found"));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
     }
 
     private TransactionDTO toTransactionDTO(Transaction transaction) {
         return new TransactionDTO(
                 transaction.getId(),
-                transaction.getBook().getBookId(),
-                transaction.getMember().getMemberId(),
+                transaction.getBook().getTitle(),
+                transaction.getMember().getUsername(),
                 transaction.getTransactionType(),
                 transaction.getTransactionDate(),
-                transaction.getReturnDate()
+                transaction.getReturnDate(),
+                transaction.isFinished()
         );
     }
 

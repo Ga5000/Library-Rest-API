@@ -13,4 +13,5 @@ public interface CommentController {
     ResponseEntity<CommentDTO> updateComment(Long commentId, UpdateCommentDTO updateCommentDTO, Authentication authentication);
     ResponseEntity<List<CommentDTO>> getAllMemberCommentsById(Long memberId);
     ResponseEntity<Void> deleteComment(Long commentId);
+    ResponseEntity<List<CommentDTO>> getAllBookComments(Long bookId);
 }

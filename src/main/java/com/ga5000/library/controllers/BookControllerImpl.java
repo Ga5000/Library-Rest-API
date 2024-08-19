@@ -30,7 +30,7 @@ public class BookControllerImpl implements BookController {
     @PutMapping("/{bookId}")
     @Override
     public ResponseEntity<BookDTO> updateBook(@PathVariable("bookId") Long bookId, @RequestBody @Valid UpdateBookDTO book) {
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.updateBook(book, bookId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.updateBook(book, bookId));
     }
 
     @DeleteMapping("/{bookId}")

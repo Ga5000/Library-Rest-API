@@ -7,9 +7,10 @@ import java.time.LocalDateTime;
 
 public record TransactionDTO(
         Long id,
-        Long bookId,
-        Long memberId,
+        String bookTitle,
+        String memberName,
         TransactionType transactionType,
         LocalDateTime transactionDate,
-        LocalDateTime returnDate
+        LocalDateTime returnDate,
+        boolean finished
 ) {}

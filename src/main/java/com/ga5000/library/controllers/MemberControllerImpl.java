@@ -1,6 +1,5 @@
 package com.ga5000.library.controllers;
 
-
 import com.ga5000.library.dtos.Member.AllMembersDTO;
 import com.ga5000.library.dtos.Member.MemberDTO;
 import com.ga5000.library.dtos.Member.UpdateMemberDTO;
@@ -8,10 +7,9 @@ import com.ga5000.library.exceptions.MemberNotFoundException;
 import com.ga5000.library.services.MemberServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -39,14 +37,13 @@ public class MemberControllerImpl implements MemberController {
         }
     }
 
-
     @GetMapping("/{memberId}")
     @Override
     public ResponseEntity<MemberDTO> getMemberDetails(@PathVariable("memberId") Long memberId, Authentication authentication) {
         String currentUsername = authentication.getName();
         try {
             MemberDTO memberDTO = memberService.getMemberById(memberId, currentUsername);
-            return ResponseEntity.status(HttpStatus.OK).body(memberDTO);
+            return ResponseEntity.ok(memberDTO);
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -59,22 +56,19 @@ public class MemberControllerImpl implements MemberController {
                                                   @RequestBody @Valid UpdateMemberDTO updateMemberDTO) {
         String currentUsername = authentication.getName();
         try {
-
             MemberDTO updatedMember = memberService.updateMember(memberId, updateMemberDTO, currentUsername);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedMember);
+            return ResponseEntity.ok(updatedMember);
         } catch (AccessDeniedException e) {
-
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (MemberNotFoundException e) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @PostMapping("/find/all")
+    @GetMapping
     @Override
     public ResponseEntity<List<AllMembersDTO>> getAllMembers() {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.getAllMembers());
+        return ResponseEntity.ok(memberService.getAllMembers());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -82,25 +76,23 @@ public class MemberControllerImpl implements MemberController {
     @Override
     public ResponseEntity<Object> renewMemberShip(@PathVariable("memberId") Long memberId, Authentication authentication) {
         String currentUsername = authentication.getName();
-        try{
-            memberService.renewMemberShip(memberId,currentUsername);
-            return ResponseEntity.status(HttpStatus.OK).body("Membership renewed");
-        }catch (AccessDeniedException e){
+        try {
+            memberService.renewMemberShip(memberId, currentUsername);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
-    @PostMapping("/find/email/{email}")
+    @GetMapping("/find/email/{email}")
     @Override
     public ResponseEntity<MemberDTO> getMemberByEmail(@PathVariable("email") String email) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByEmail(email));
     }
 
-    @PostMapping("/find/phone/{phoneNumber}")
+    @GetMapping("/find/phone/{phoneNumber}")
     @Override
     public ResponseEntity<MemberDTO> getMemberByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByPhoneNumber(phoneNumber));
     }
-
-
 }

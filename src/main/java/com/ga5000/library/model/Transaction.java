@@ -25,17 +25,22 @@ public class Transaction implements Serializable {
     @Column(nullable = false)
     private LocalDateTime transactionDate;
 
+    @Column(nullable = false)
     private LocalDateTime returnDate;
+
+    @Column(nullable = false)
+    private boolean finished;
 
     public Transaction(){}
 
-    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate, LocalDateTime returnDate) {
+    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate, LocalDateTime returnDate, boolean finished) {
         this.id = id;
         this.book = book;
         this.member = member;
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
         this.returnDate = returnDate;
+        this.finished = finished;
     }
 
     public Long getId() { return id; }
@@ -59,5 +64,13 @@ public class Transaction implements Serializable {
 
     public void setReturnDate(LocalDateTime returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

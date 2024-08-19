@@ -60,7 +60,7 @@ public class AuthControllerImpl implements AuthController {
 
         memberService.createMember(createMemberDTO);
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
     @Override
@@ -72,6 +72,6 @@ public class AuthControllerImpl implements AuthController {
         }
 
         String token = tokenServiceImpl.generateToken((Member) userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new AuthResponse(token));
     }
 }

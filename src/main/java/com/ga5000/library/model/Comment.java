@@ -3,7 +3,7 @@ package com.ga5000.library.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 public class Comment implements Serializable {
@@ -23,11 +23,11 @@ public class Comment implements Serializable {
     private Member member;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     public Comment() {}
 
-    public Comment(Long id, String content, Book book, Member member, LocalDateTime createdAt) {
+    public Comment(Long id, String content, Book book, Member member, Date createdAt) {
         this.id = id;
         this.content = content;
         this.book = book;
@@ -47,6 +47,6 @@ public class Comment implements Serializable {
     public Member getMember() { return member; }
     public void setMember(Member member) { this.member = member; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

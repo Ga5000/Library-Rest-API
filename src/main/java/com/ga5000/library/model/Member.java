@@ -8,9 +8,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
 import java.util.Collection;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +37,7 @@ public class Member implements UserDetails, Serializable {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private LocalDateTime membershipDate;
+    private Date membershipDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -51,7 +53,7 @@ public class Member implements UserDetails, Serializable {
 
 
     public Member(Long memberId, String username, String password, String email,
-                  String phoneNumber, LocalDateTime membershipDate, UserRole role,
+                  String phoneNumber, Date membershipDate, UserRole role,
                   List<Comment> comments, List<Transaction> transactions) {
         this.memberId = memberId;
         this.username = username;
@@ -100,11 +102,11 @@ public class Member implements UserDetails, Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public LocalDateTime getMembershipDate() {
+    public Date getMembershipDate() {
         return membershipDate;
     }
 
-    public void setMembershipDate(LocalDateTime membershipDate) {
+    public void setMembershipDate(Date membershipDate) {
         this.membershipDate = membershipDate;
     }
 
@@ -144,7 +146,7 @@ public class Member implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonExpired() {
-        return LocalDateTime.now().isBefore(membershipDate.plusMonths(6));
+        return Date.from(Instant.now()).after(membershipDate);
     }
 
     @Override

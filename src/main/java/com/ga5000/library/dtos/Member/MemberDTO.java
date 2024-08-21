@@ -1,5 +1,5 @@
 package com.ga5000.library.dtos.Member;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
-public record MemberDTO(Long memberId, String username, String email, String phoneNumber, LocalDateTime membershipDate) {}
+public record MemberDTO(Long memberId, String username, String email, String phoneNumber, Date membershipDate) {}

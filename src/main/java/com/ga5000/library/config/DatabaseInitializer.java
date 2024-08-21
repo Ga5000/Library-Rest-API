@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Date;
 
 @Configuration
 public class DatabaseInitializer {
@@ -22,7 +23,7 @@ public class DatabaseInitializer {
                 admin.setPassword(passwordEncoder.encode("a"));
                 admin.setEmail("admin@example.com");
                 admin.setPhoneNumber("1234567890");
-                admin.setMembershipDate(LocalDateTime.now());
+                admin.setMembershipDate(Date.from(Instant.now()));
                 admin.setRole(UserRole.ADMIN);
                 memberRepository.save(admin);
             }

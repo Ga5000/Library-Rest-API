@@ -3,7 +3,7 @@ package com.ga5000.library.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,11 +39,11 @@ public class Book implements Serializable {
     private int totalCopies;
 
     @Column(nullable = false)
-    private LocalDateTime publishedDate;
+    private Date publishedDate;
 
     public Book(){}
 
-    public Book(Long bookId, String title, String isbn, String author, List<String> genres, List<Comment> comments, int availableCopies, int totalCopies, LocalDateTime publishedDate) {
+    public Book(Long bookId, String title, String isbn, String author, List<String> genres, List<Comment> comments, int availableCopies, int totalCopies, Date publishedDate) {
         this.bookId = bookId;
         this.title = title;
         this.isbn = isbn;
@@ -119,11 +119,11 @@ public class Book implements Serializable {
         this.totalCopies = totalCopies;
     }
 
-    public LocalDateTime getPublishedDate() {
+    public Date getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(LocalDateTime publishedDate) {
+    public void setPublishedDate(Date publishedDate) {
         this.publishedDate = publishedDate;
     }
 

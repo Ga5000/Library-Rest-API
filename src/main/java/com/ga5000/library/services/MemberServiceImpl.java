@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +38,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberDTO createMember(CreateMemberDTO createMemberDTO) {
         Member member = new Member();
         BeanUtils.copyProperties(createMemberDTO, member);
-        member.setMembershipDate(LocalDateTime.now());
+        member.setMembershipDate(Date.from(Instant.now()));
         member.setRole(UserRole.USER);
         return saveAndConvertToDTO(member);
     }
@@ -108,7 +108,11 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new MemberNotFoundException("Member not found"));
 
         if (isAdmin() || memberToRenew.getUsername().equals(currentUsername)) {
-            memberToRenew.setMembershipDate(memberToRenew.getMembershipDate().plusMonths(6));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(memberToRenew.getMembershipDate());
+            calendar.add(Calendar.MONTH, 6);
+
+            memberToRenew.setMembershipDate(calendar.getTime());
             memberRepository.save(memberToRenew);
         } else {
             throw new AccessDeniedException("You are not authorized to renew this membership");

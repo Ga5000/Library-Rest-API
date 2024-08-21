@@ -2,7 +2,7 @@ package com.ga5000.library.dtos.Transaction;
 
 import com.ga5000.library.model.TransactionType;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 public record TransactionDTO(
@@ -10,7 +10,7 @@ public record TransactionDTO(
         String bookTitle,
         String memberName,
         TransactionType transactionType,
-        LocalDateTime transactionDate,
-        LocalDateTime returnDate,
+        Date transactionDate,
+        Date returnDate,
         boolean finished
 ) {}

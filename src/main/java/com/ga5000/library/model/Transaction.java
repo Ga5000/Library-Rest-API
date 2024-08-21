@@ -3,7 +3,8 @@ package com.ga5000.library.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 @Entity
 public class Transaction implements Serializable {
@@ -23,17 +24,17 @@ public class Transaction implements Serializable {
     private TransactionType transactionType;
 
     @Column(nullable = false)
-    private LocalDateTime transactionDate;
+    private Date transactionDate;
 
     @Column(nullable = false)
-    private LocalDateTime returnDate;
+    private Date returnDate;
 
     @Column(nullable = false)
     private boolean finished;
 
     public Transaction(){}
 
-    public Transaction(Long id, Book book, Member member, TransactionType transactionType, LocalDateTime transactionDate, LocalDateTime returnDate, boolean finished) {
+    public Transaction(Long id, Book book, Member member, TransactionType transactionType, Date transactionDate, Date returnDate, boolean finished) {
         this.id = id;
         this.book = book;
         this.member = member;
@@ -55,14 +56,14 @@ public class Transaction implements Serializable {
     public TransactionType getTransactionType() { return transactionType; }
     public void setTransactionType(TransactionType transactionType) { this.transactionType = transactionType; }
 
-    public LocalDateTime getTransactionDate() { return transactionDate; }
-    public void setTransactionDate(LocalDateTime transactionDate) { this.transactionDate = transactionDate; }
+    public Date getTransactionDate() { return transactionDate; }
+    public void setTransactionDate(Date transactionDate) { this.transactionDate = transactionDate; }
 
-    public LocalDateTime getReturnDate() {
+    public Date getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(LocalDateTime returnDate) {
+    public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
     }
 

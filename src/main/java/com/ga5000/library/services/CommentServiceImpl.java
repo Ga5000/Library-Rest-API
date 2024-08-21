@@ -17,8 +17,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,7 +49,7 @@ public class CommentServiceImpl implements CommentService{
 
             comment.setBook(book);
             comment.setMember(member);
-            comment.setCreatedAt(LocalDateTime.now());
+            comment.setCreatedAt(Date.from(Instant.now()));
 
             commentRepository.save(comment);
 

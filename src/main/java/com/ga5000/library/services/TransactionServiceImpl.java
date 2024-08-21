@@ -17,7 +17,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
@@ -54,13 +56,19 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Transaction transaction = new Transaction();
+        Calendar calendar = Calendar.getInstance();
 
         BeanUtils.copyProperties(createTransactionDTO, transaction);
+
         transaction.setBook(book);
         transaction.setMember(member);
         transaction.setTransactionType(TransactionType.BORROW);
-        transaction.setTransactionDate(LocalDateTime.now());
-        transaction.setReturnDate(transaction.getTransactionDate().plusDays(7));
+        transaction.setTransactionDate(Date.from(Instant.now()));
+
+        calendar.setTime(transaction.getTransactionDate());
+        calendar.add(Calendar.DAY_OF_MONTH, 7);
+        transaction.setReturnDate(calendar.getTime());
+
         transaction.setFinished(false);
 
         transactionRepository.save(transaction);
@@ -119,7 +127,10 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionTypeException("Cannot renew a transaction that is not a BORROW type.");
         }
         if(renewTransactionDTO.transactionType() == TransactionType.RENEW){
-            transaction.setReturnDate(transaction.getReturnDate().plusDays(7));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(transaction.getReturnDate());
+            calendar.add(Calendar.DAY_OF_MONTH, 7);
+            transaction.setReturnDate(calendar.getTime());
         }
             transactionRepository.save(transaction);
             return toTransactionDTO(transaction);
@@ -178,7 +189,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDTO> getTransactionsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<TransactionDTO> getTransactionsByDateRange(Date startDate, Date endDate) {
         List<Transaction> transactions = transactionRepository.findByTransactionDateBetween(startDate, endDate);
         
         return transactions.stream()

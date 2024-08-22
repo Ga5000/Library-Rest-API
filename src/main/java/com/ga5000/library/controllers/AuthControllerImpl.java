@@ -74,4 +74,5 @@ public class AuthControllerImpl implements AuthController {
         String token = tokenServiceImpl.generateToken((Member) userDetails);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new AuthResponse(token));
     }
+
 }

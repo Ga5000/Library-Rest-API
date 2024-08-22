@@ -10,4 +10,5 @@ import org.springframework.http.ResponseEntity;
 public interface AuthController {
     ResponseEntity<String> register( CreateMemberDTO request);
     ResponseEntity<AuthResponse> login(AuthDTO request);
+
 }

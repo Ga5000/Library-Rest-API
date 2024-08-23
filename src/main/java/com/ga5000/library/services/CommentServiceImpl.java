@@ -20,7 +20,6 @@ import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService{
@@ -80,25 +79,6 @@ public class CommentServiceImpl implements CommentService{
     }
 
 
-    @Override
-    public List<CommentDTO> getCommentsOfMemberByMemberId(Long memberId) {
-        List<Comment> comments = commentRepository.findByMember_MemberId(memberId);
-        if (comments.isEmpty()) {
-            throw new MemberNotFoundException("No comments found for member with id: " + memberId);
-        }
-        return comments.stream()
-                .map(this::toCommentDTO).toList();
-    }
-
-    @Override
-    public List<CommentDTO> getBookCommentsByBookId(Long bookId) {
-        List<Comment> comments = commentRepository.findByBook_BookId(bookId);
-        if (comments.isEmpty()) {
-            throw new BookNotFoundException("No comments found for book with id: " + bookId);
-        }
-        return comments.stream()
-                .map(this::toCommentDTO).toList();
-    }
 
     @Transactional
     @Override

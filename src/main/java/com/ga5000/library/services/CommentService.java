@@ -10,8 +10,6 @@ import java.util.List;
 public interface CommentService {
     CommentDTO createComment(Long bookId, Long memberId, CreateCommentDTO createCommentDTO, String currentUsername) throws AccessDeniedException;
     CommentDTO updateComment(Long commentId, UpdateCommentDTO updateCommentDTO, String currentUsername) throws AccessDeniedException;
-    List<CommentDTO> getCommentsOfMemberByMemberId(Long memberId);
-    List<CommentDTO> getBookCommentsByBookId(Long bookId);
     void deleteComment(Long commentId);
 
 }

@@ -3,7 +3,6 @@ package com.ga5000.library.controllers;
 import com.ga5000.library.dtos.Comment.CommentDTO;
 import com.ga5000.library.dtos.Comment.CreateCommentDTO;
 import com.ga5000.library.dtos.Comment.UpdateCommentDTO;
-import com.ga5000.library.model.Book;
 import com.ga5000.library.services.CommentServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,17 +50,6 @@ public class CommentControllerImpl implements CommentController{
         }
     }
 
-    @GetMapping("/member/{memberId}")
-    @Override
-    public ResponseEntity<List<CommentDTO>> getAllMemberCommentsById(@PathVariable("memberId") Long memberId) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentsOfMemberByMemberId(memberId));
-    }
-
-    @GetMapping("/book/{bookId}")
-    @Override
-    public ResponseEntity<List<CommentDTO>> getAllBookComments(@PathVariable("bookId") Long bookId){
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.getBookCommentsByBookId(bookId));
-    }
 
     @DeleteMapping("{commentId}")
     @Override

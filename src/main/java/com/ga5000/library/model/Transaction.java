@@ -26,7 +26,7 @@ public class Transaction implements Serializable {
     @Column(nullable = false)
     private Date transactionDate;
 
-    @Column(nullable = false)
+    @Column
     private Date returnDate;
 
     @Column(nullable = false)

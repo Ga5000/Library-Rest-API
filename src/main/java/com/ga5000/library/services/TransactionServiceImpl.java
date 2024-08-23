@@ -109,7 +109,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> getAllTransactions() {
-        return transactionRepository.findAll(Sort.by(Sort.Direction.ASC))
+        return transactionRepository.findAll(Sort.by(Sort.Direction.ASC,"transactionDate"))
                 .stream().map(this::toTransactionDTO).toList();
     }
 
